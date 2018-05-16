@@ -309,6 +309,28 @@ def export_signature_to_string(y, message, signature):
     return dump + data
 
 
+def import_signature_from_string(string):
+    """ Imports a signature from a string.
+    """
+    lines = string.split('\n')
+    signature = []
+    signature.append(int(lines[0]))
+    signature.append(list(map(lambda x: int(x), lines[1].split(','))))
+    raw_x = lines[2].split(',')[0]
+    raw_y = lines[2].split(',')[1]
+    point = ecdsa.ellipticcurve.Point(curve_secp256k1, int(raw_x), int(raw_y))
+    signature.append(point)
+
+    message = ''.join(lines[3].split(','))
+
+    all_pub_keys_raw = map(lambda p: p.split(','), lines[4].split(';'))
+    pub_keys = list(map(lambda p: ecdsa.ellipticcurve.Point(
+        curve_secp256k1, int(p[0]), int(p[1])
+    ), all_pub_keys_raw))
+
+    return (pub_keys, message, signature)
+
+
 def export_private_keys(s_keys, foler_name='./data', file_name='secrets.txt'):
     """ Exports a set  of private keys to a file.
 
