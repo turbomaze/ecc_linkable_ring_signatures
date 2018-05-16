@@ -101,6 +101,8 @@ class VerifyingKey:
 
     def verify(self, signature, data, hashfunc=None, sigdecode=sigdecode_string):
         hashfunc = hashfunc or self.default_hashfunc
+        if PY3 and isinstance(data, str):
+            data = data.encode()
         digest = hashfunc(data).digest()
         return self.verify_digest(signature, digest, sigdecode)
 
@@ -227,6 +229,8 @@ class SigningKey:
 
     def sign_deterministic(self, data, hashfunc=None, sigencode=sigencode_string):
         hashfunc = hashfunc or self.default_hashfunc
+        if PY3 and isinstance(data, str):
+            data = data.encode()
         digest = hashfunc(data).digest()
 
         return self.sign_digest_deterministic(digest, hashfunc=hashfunc, sigencode=sigencode)
@@ -257,6 +261,8 @@ class SigningKey:
         """
 
         hashfunc = hashfunc or self.default_hashfunc
+        if PY3 and isinstance(data, str):
+            data = data.encode()
         h = hashfunc(data).digest()
         return self.sign_digest(h, entropy, sigencode, k)
 
